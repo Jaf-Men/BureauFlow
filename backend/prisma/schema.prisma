@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  advogado
+  escritorio
+  cliente
+}
+
+enum InvitationStatus {
+  enviado
+  aceito
+  expirado
+  cancelado
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  name               String
+  email              String              @unique
+  passwordHash       String
+  role               Role
+  phone              String?
+  document           String?
+  oab                String?
+  section            String?
+  emailVerified      Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  verificationTokens VerificationToken[]
+  invitationsSent    Invitation[]        @relation("InvitationSender")
+  invitationsAccepted Invitation[]       @relation("InvitationRecipient")
+}
+
+model Organization {
+  id               String   @id @default(uuid())
+  name             String
+  document         String   @unique
+  address          String?
+  phone            String?
+  responsibleName  String
+  responsibleEmail String
+  lawyers          Json
+  ownerId          String
+  createdAt        DateTime @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Invitation {
+  id          String           @id @default(uuid())
+  token       String           @unique
+  name        String
+  email       String
+  message     String?
+  expiresAt   DateTime
+  status      InvitationStatus @default(enviado)
+  senderId    String
+  sender      User             @relation("InvitationSender", fields: [senderId], references: [id])
+  recipientId String?
+  recipient   User?            @relation("InvitationRecipient", fields: [recipientId], references: [id])
+  createdAt   DateTime         @default(now())
+}
