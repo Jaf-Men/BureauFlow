@@ -24,7 +24,18 @@ O front-end utiliza React, Vite e Tailwind CSS. O backend em `backend/` usa Nest
 5. Convidar um cliente por link com expiração.
 6. Aceitar o convite e criar a conta de cliente.
 
-No ambiente local, os links de confirmação e convite aparecem na interface para viabilizar o teste sem um provedor de e-mail. A API usa armazenamento em memória neste modo; configure `DATABASE_URL` e aplique as migrations do Prisma para usar PostgreSQL persistente.
+No ambiente local, os links de confirmacao e convite aparecem na interface para viabilizar o teste sem um provedor de e-mail. A API usa armazenamento em memoria neste modo; configure `DATABASE_URL` e aplique as migrations do Prisma para usar PostgreSQL persistente.
+
+## Atualizacoes recentes (versao atual)
+
+- Onboarding com chamada direta para escolha de modulo e atalho opcional para painel.
+- Dashboard com sidebar colapsavel, menu consolidado (Processos, Clientes, Documentos, Assinaturas, BureauIA e Auditoria) e acao de saida destacada.
+- Persistencia de sessao e tela atual no front-end via localStorage (`bf-auth`, `bf-session`, `bf-view`) para manter contexto apos recarregar.
+- Fallback de erro de renderizacao no app com acao de recarregar para evitar tela branca silenciosa.
+- Acesso em rede local (LAN) habilitado no fluxo de desenvolvimento:
+	- front-end com host `0.0.0.0`;
+	- back-end com host configuravel e CORS flexivel em ambiente nao-producao;
+	- resolucao automatica da URL da API em `src/app/api.ts` com base no host do navegador.
 
 ## Executar o projeto
 
@@ -41,7 +52,7 @@ npm install
 npm run dev
 ```
 
-A aplicação fica disponível em `http://127.0.0.1:5173` e a API em `http://127.0.0.1:3000`.
+A aplicacao fica disponivel em `http://127.0.0.1:5173` e a API em `http://127.0.0.1:3000`.
 
 Opcionalmente, para reduzir conflito de porta e padronizar o navegador fora da IDE, use:
 
@@ -51,9 +62,9 @@ npm run dev:browser
 
 Esse comando fixa o front-end em `http://127.0.0.1:5176`.
 
-### Execução rápida no Windows (fora da IDE)
+### Execucao rapida no Windows (fora da IDE)
 
-Se o PowerShell bloquear o comando `npm`, use o arquivo `start-dev.bat` na raiz do projeto.
+Se o PowerShell bloquear o comando `npm`, use o arquivo `start-dev.bat` na raiz do projeto (o script usa `npm.cmd`).
 
 1. Dê duplo clique em `start-dev.bat`.
 2. O script abrirá duas janelas separadas:
@@ -61,7 +72,7 @@ Se o PowerShell bloquear o comando `npm`, use o arquivo `start-dev.bat` na raiz 
 	- Back-end (NestJS)
 3. Para encerrar, feche as duas janelas.
 
-Por padrão, o front-end sobe em `http://127.0.0.1:5176/` (porta fixa). Se abrir uma tela em branco no navegador, faça um recarregamento forçado (`Ctrl + F5`) ou feche a aba antiga e abra novamente esse endereço.
+Por padrao, o front-end sobe em `http://127.0.0.1:5176/` (porta fixa) e tambem fica acessivel na rede local (`http://SEU_IP_LOCAL:5176/`). Se abrir uma tela em branco no navegador, faca um recarregamento forcado (`Ctrl + F5`) ou feche a aba antiga e abra novamente esse endereco.
 
 Se ainda houver conflito de instância antiga, execute `start-clean.bat`. Ele encerra processos nas portas `5176` e `3000` e inicia o projeto novamente.
 

@@ -1,4 +1,18 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:3000";
+function resolveApiUrl(): string {
+  const configured = import.meta.env.VITE_API_URL as string | undefined;
+  if (configured && configured.trim().length > 0) return configured;
+
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    const localHost = hostname === "localhost" || hostname === "127.0.0.1";
+    if (localHost) return "http://127.0.0.1:3000";
+    return `${protocol}//${hostname}:3000`;
+  }
+
+  return "http://127.0.0.1:3000";
+}
+
+const API_URL = resolveApiUrl();
 
 type ApiOptions = RequestInit & { token?: string };
 

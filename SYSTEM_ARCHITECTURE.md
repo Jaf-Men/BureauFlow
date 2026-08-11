@@ -1,7 +1,7 @@
 # BureauFlow System Architecture
 
 ## Overview
-BureauFlow is a legal practice management system for lawyers, law firms, and clients. It handles user registration, email verification, authentication, and client invitations.
+BureauFlow is a legal operations management system for lawyers, law firms, and clients. It covers registration, email verification, authentication, invitations, process orchestration, document management, electronic signatures, BureauIA support, and audit views.
 
 ## Technology Stack
 
@@ -17,9 +17,9 @@ BureauFlow is a legal practice management system for lawyers, law firms, and cli
 ```mermaid
 graph TB
     subgraph "Frontend (React + Vite)"
-        FE[BureauFlowJourney.tsx]
+        FE[App.tsx]
         API[api.ts - HTTP Client]
-        COMP[Components/]
+        MOD[Feature Modules]
     end
 
     subgraph "Backend (NestJS)"
@@ -222,9 +222,14 @@ erDiagram
 ## Key Components
 
 ### Frontend (`src/`)
-- **BureauFlowJourney.tsx**: Main application component implementing the user journey
-- **api.ts**: HTTP client with JWT authentication handling
-- **components/**: Reusable UI components (49 components)
+- **App.tsx**: Main application component implementing login, onboarding, dashboard, and module routing
+- **api.ts**: HTTP client with host-aware API URL resolution (`VITE_API_URL` override or browser host fallback)
+- **features/processes/ProcessesModule.tsx**: Process orchestration module
+- **app/DocumentManagementModule.tsx**: Document management module
+- **app/ElectronicSignaturesModule.tsx**: Electronic signatures module
+- **app/BureauIAModule.tsx**: BureauIA module
+- **app/AuditCenterModule.tsx**: Audit center module
+- **app/components/**: Reusable UI components
 
 ### Backend (`backend/src/`)
 - **main.ts**: NestJS application entry point (port 3000)
@@ -269,6 +274,13 @@ erDiagram
 - **CORS**: Configured for frontend origin
 - **Input Validation**: class-validator DTOs on all endpoints
 
+## Runtime Resilience and Session Continuity
+
+- **Error Boundary (frontend)**: render-fallback with reload action to avoid blank-screen dead ends.
+- **Session persistence (frontend)**: `bf-auth`, `bf-session`, and `bf-view` in localStorage keep user context after reload.
+- **Host-aware API routing**: frontend resolves API base URL from current browser host when `VITE_API_URL` is not set.
+- **LAN-ready development**: backend listens on `0.0.0.0` by default and supports local + custom origins via env (`FRONTEND_URL` / `FRONTEND_URLS`).
+
 ## Development vs Production
 
 ### Local Development
@@ -276,6 +288,7 @@ erDiagram
 - Verification/invitation links displayed in console
 - No email provider required
 - Default JWT secret for development
+- Frontend can run on localhost or LAN (`5176` common browser profile)
 
 ### Production
 - PostgreSQL database via Prisma ORM

@@ -109,7 +109,16 @@ Nao implementado (conforme escopo):
 
 ## Validacao Tecnica
 - Sem erros de TypeScript/editor nos arquivos alterados da Sprint 06.
-- Configuracao de `backend/tsconfig.json` ajustada para compatibilidade TS6 local (rootDir e ignoreDeprecations).
+- Configuracao de `backend/tsconfig.json` ajustada para compatibilidade com TypeScript 5.8 local (`ignoreDeprecations: "5.0"`).
+
+## Atualizacao pos-Sprint 06 (estado atual)
+- Onboarding refinado com CTA de continuidade no painel e entrada direta por opcoes de trabalho.
+- Dashboard principal consolidado com sidebar colapsavel e menu operacional unico.
+- Persistencia de sessao e tela ativa no front-end para continuidade apos refresh.
+- Error boundary no app para reduzir risco de tela branca silenciosa.
+- Ajustes de rede local:
+  - front-end em host aberto (`0.0.0.0`) no script `start-dev.bat`;
+  - back-end com CORS flexivel em desenvolvimento e escuta por host configuravel.
 
 ## Arquivos Criados
 - `src/features/processes/ProcessesModule.tsx`

@@ -26,6 +26,9 @@ export const clientes = [
   { id: "CL-3", nome: "Grupo Atlante", contato: "contato@atlante.com", documento: "12.345.678/0001-99" },
 ];
 
+// Alias in English for compatibility with existing imports.
+export const clients = clientes;
+
 export const peopleDirectory = [
   { id: "P-1", nome: "Joao da Silva", contato: "(11) 99881-1234", identificacao: "CPF 123.456.789-00" },
   { id: "P-2", nome: "Maria Santos", contato: "(11) 99882-1234", identificacao: "CPF 321.654.987-00" },
