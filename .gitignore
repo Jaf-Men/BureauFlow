@@ -4,3 +4,6 @@ backend/dist
 *.log
 .env
 backend/.env
+.vscode/
+backend/.vscode/
+backend/prisma/migrations/20260813_sprint_06_1_domain_refinement/

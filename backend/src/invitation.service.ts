@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import * as bcrypt from "bcryptjs";
 import { AuthService } from "./auth.service";
+import { Role } from "./store.service";
 import { StoreService } from "./store.service";
 
 @Injectable()
 export class InvitationService {
   constructor(private readonly store: StoreService, private readonly auth: AuthService) {}
 
-  create(senderId: string, input: { name: string; email: string; message?: string; expiresAt: string }) {
+  create(senderId: string, input: { name: string; email: string; invitedRole?: Role; message?: string; expiresAt: string }) {
     const expiresAt = new Date(input.expiresAt);
     if (Number.isNaN(expiresAt.valueOf()) || expiresAt <= new Date()) throw new BadRequestException("Escolha uma data futura para expiração.");
     const invitation = this.store.createInvitation({ senderId, ...input, expiresAt: expiresAt.toISOString() });
@@ -34,9 +35,12 @@ export class InvitationService {
         name: input.name,
         email: input.email,
         passwordHash: await bcrypt.hash(input.password, 12),
-        role: "cliente",
+        role: invitation.invitedRole ?? "cliente",
+        roles: [invitation.invitedRole ?? "cliente"],
         emailVerified: true,
       });
+    } else if (invitation.invitedRole) {
+      this.store.addRoleToUser(user.id, invitation.invitedRole);
     }
     const accepted = this.store.acceptInvitation(token, user.id);
     if (!accepted) throw new BadRequestException("Não foi possível aceitar este convite.");

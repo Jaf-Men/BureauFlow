@@ -5,6 +5,16 @@
 	mix-blend-mode: multiply;
 }
 
+html,
+body,
+#root {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+}
+
 .brand-logo-bureauflow {
 	width: 318px;
 	height: 70px;

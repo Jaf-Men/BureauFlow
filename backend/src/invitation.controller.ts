@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
-import { IsEmail, IsISO8601, IsOptional, IsString, MinLength } from "class-validator";
+import { IsEmail, IsISO8601, IsIn, IsOptional, IsString, MinLength } from "class-validator";
 import { AuthenticatedRequest, JwtAuthGuard } from "./jwt-auth.guard";
 import { InvitationService } from "./invitation.service";
 
 class CreateInvitationDto {
   @IsString() name!: string;
   @IsEmail() email!: string;
+  @IsOptional() @IsIn(["advogado", "escritorio", "despachante", "empresa", "cliente"]) invitedRole?: "advogado" | "escritorio" | "despachante" | "empresa" | "cliente";
   @IsOptional() @IsString() message?: string;
   @IsISO8601() expiresAt!: string;
 }

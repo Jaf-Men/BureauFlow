@@ -10,7 +10,37 @@ datasource db {
 enum Role {
   advogado
   escritorio
+  despachante
+  empresa
   cliente
+}
+
+enum AddressType {
+  RESIDENTIAL
+  PROFESSIONAL
+  COMMERCIAL
+}
+
+enum ContactType {
+  EMAIL
+  PHONE
+  MOBILE
+  WHATSAPP
+}
+
+enum ParticipantRole {
+  CLIENT
+  LAWYER
+  LEGAL_REPRESENTATIVE
+  PARTY
+  WITNESS
+  RESPONSIBLE
+  OTHER
+}
+
+enum LegalRepresentationType {
+  LEGAL_REPRESENTATIVE
+  AUTO_REPRESENTANTE_LEGAL
 }
 
 enum InvitationStatus {
@@ -26,6 +56,7 @@ model User {
   email              String              @unique
   passwordHash       String
   role               Role
+  roles              Role[]
   phone              String?
   document           String?
   oab                String?
@@ -35,6 +66,9 @@ model User {
   verificationTokens VerificationToken[]
   invitationsSent    Invitation[]        @relation("InvitationSender")
   invitationsAccepted Invitation[]       @relation("InvitationRecipient")
+  addresses          Address[]
+  contacts           Contact[]
+  processParticipations ProcessParticipant[]
 }
 
 model Organization {
@@ -48,6 +82,76 @@ model Organization {
   lawyers          Json
   ownerId          String
   createdAt        DateTime @default(now())
+  addresses        Address[]
+  contacts         Contact[]
+  processes        Process[]
+}
+
+model Address {
+  id             String       @id @default(uuid())
+  type           AddressType
+  zipCode        String?
+  street         String?
+  number         String?
+  complement     String?
+  district       String?
+  city           String?
+  state          String?
+  country        String?
+  reference      String?
+  main           Boolean      @default(false)
+  active         Boolean      @default(true)
+  userId         String?
+  organizationId String?
+  user           User?        @relation(fields: [userId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Contact {
+  id             String       @id @default(uuid())
+  type           ContactType
+  value          String
+  main           Boolean      @default(false)
+  active         Boolean      @default(true)
+  userId         String?
+  organizationId String?
+  user           User?        @relation(fields: [userId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Process {
+  id            String              @id @default(uuid())
+  code          String              @unique
+  name          String
+  status        String
+  createdByUserId String
+  organizationId String?
+  organization  Organization?       @relation(fields: [organizationId], references: [id])
+  participants  ProcessParticipant[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model ProcessParticipant {
+  id                    String                  @id @default(uuid())
+  processId             String
+  userId                String
+  organizationId        String?
+  role                  ParticipantRole
+  active                Boolean                 @default(true)
+  enteredAt             DateTime                @default(now())
+  exitedAt              DateTime?
+  replacedByParticipantId String?
+  replacementReason     String?
+  representationType    LegalRepresentationType?
+  process               Process                 @relation(fields: [processId], references: [id])
+  user                  User                    @relation(fields: [userId], references: [id])
+
+  @@index([processId, role, active])
 }
 
 model VerificationToken {
